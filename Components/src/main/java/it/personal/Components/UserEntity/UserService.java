@@ -16,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -118,11 +117,6 @@ public class UserService {
         return userRepository.findUsersWithCompanyOrPrivateRoles();
     }
 
-    public List<UserEntity> getNewsletterUsers() {
-        return userRepository.findUsersForNewsletter();
-    }
 
-    public List<UserEntity> searchUsersByUsername(String query) {
-        return userRepository.searchUsers(query);
-    }
+
 }

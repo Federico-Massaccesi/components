@@ -12,7 +12,6 @@ import java.util.List;
 public class RegisteredUserDTO {
     Long id;
     String username;
-    String email;
     private List<Roles> roles;
 
     @Builder(setterPrefix = "with")
