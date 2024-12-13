@@ -2,7 +2,7 @@ package it.personal.Components.machines;
 
 
 import it.personal.Components.BaseEntity;
-import it.personal.Components.components.Components;
+import it.personal.Components.machineComponentLink.MachineComponentLink;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,12 +21,7 @@ public class Machines extends BaseEntity {
 
     private Double price;
 
-    @ManyToMany
-    @JoinTable(
-            name = "machine_component", // Nome della tabella di join
-            joinColumns = @JoinColumn(name = "machine_id"), // Colonna per Machines
-            inverseJoinColumns = @JoinColumn(name = "component_id") // Colonna per Components
-    )
-    private List<Components> linkedComponents;
+    @OneToMany(mappedBy = "machine", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<MachineComponentLink> components;
 
 }

@@ -14,9 +14,11 @@ public class MachinesController {
     private MachinesService machineService;
 
     @PostMapping
-    public ResponseEntity<Machines> createMachine(@RequestBody Machines machine) {
-        return ResponseEntity.ok(machineService.saveMachine(machine));
+    public ResponseEntity<Machines> createMachine(@RequestBody MachineWithComponentsRequest request) {
+        Machines machine = machineService.createMachineWithComponents(request);
+        return ResponseEntity.ok(machine);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Machines> getMachineById(@PathVariable Long id) {

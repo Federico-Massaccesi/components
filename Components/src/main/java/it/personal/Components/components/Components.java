@@ -1,10 +1,8 @@
 package it.personal.Components.components;
 
 import it.personal.Components.BaseEntity;
-import it.personal.Components.machines.Machines;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import it.personal.Components.machineComponentLink.MachineComponentLink;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -20,7 +18,8 @@ public class Components extends BaseEntity {
 
     private String name;
 
-    private Integer quantity;
+    private Integer totalQuantity;
 
-    @ManyToMany(mappedBy = "linkedComponents")
-    private List<Machines> linkedMachines;}
+    @OneToMany(mappedBy = "component", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MachineComponentLink> machines;
+}
