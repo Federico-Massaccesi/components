@@ -2,12 +2,15 @@ package it.personal.Components.machines;
 
 import it.personal.Components.components.Components;
 import it.personal.Components.components.ComponentsRepository;
+import it.personal.Components.components.LinkedComponentDTO;
 import it.personal.Components.machineComponentLink.MachineComponentLink;
 import it.personal.Components.machineComponentLink.MachineComponentLinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MachinesService {
@@ -25,9 +28,24 @@ public class MachinesService {
         return machineRepository.save(machine);
     }
 
-    public Machines getMachineById(Long id) {
-        return machineRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Machine not found with id: " + id));
+    public MachineResponseDTO getMachineById(Long id) {
+        var foundedMachine = machineRepository.findById(id);
+
+        if (foundedMachine.isPresent()) {
+            List<MachineComponentLink> links = machineComponentLinkRepository.findByMachineId(id);
+
+            List<LinkedComponentDTO> linkedComponents = links.stream()
+                    .map(link -> {
+                        Components component = link.getComponent();
+                        return new LinkedComponentDTO(component.getName(), link.getQuantity());
+                    })
+                    .collect(Collectors.toList());
+
+            Machines machine = foundedMachine.get();
+            return new MachineResponseDTO(machine.getName(), machine.getPrice(), linkedComponents);
+        } else {
+            throw new RuntimeException("Machine not found with id " + id);
+        }
     }
 
     public List<Machines> getAllMachines() {
@@ -39,28 +57,27 @@ public class MachinesService {
     }
 
 
-    public Machines createMachineWithComponents(MachineWithComponentsRequest request) {
-        // Crea il macchinario
-        Machines machine = new Machines();
-        machine.setName(request.getName());
-        machine.setPrice(request.getPrice());
+    @Transactional
+    public Machines createMachine(MachineRequestDTO machineRequest) {
+        // Creare l'entità della macchina
+        Machines machine = Machines.builder()
+                .withName(machineRequest.getName())
+                .withPrice(machineRequest.getPrice())
+                .build();
         Machines savedMachine = machineRepository.save(machine);
 
-        // Associa i componenti e le quantità
-        for (ComponentWithQuantityDTO componentRequest : request.getComponents()) {
+        for (ComponentQuantityDTO componentRequest : machineRequest.getComponents()) {
             Components component = componentsRepository.findById(componentRequest.getComponentId())
-                    .orElseThrow(() -> new RuntimeException("Componente non trovato"));
+                    .orElseThrow(() -> new IllegalArgumentException("Component not found with ID: " + componentRequest.getComponentId()));
 
-            MachineComponentLink link = new MachineComponentLink();
-            link.setMachine(savedMachine);
-            link.setComponent(component);
-            link.setQuantity(componentRequest.getQuantity());
-
-            // Salva la relazione
+            MachineComponentLink link = MachineComponentLink.builder()
+                    .withMachine(savedMachine)
+                    .withComponent(component)
+                    .withQuantity(componentRequest.getQuantity())
+                    .build();
             machineComponentLinkRepository.save(link);
         }
 
-        // Ritorna la macchina con i componenti associati
         return savedMachine;
     }
 

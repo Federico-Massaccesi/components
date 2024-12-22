@@ -1,5 +1,6 @@
 package it.personal.Components.components;
 
+import it.personal.Components.machineComponentLink.MachineComponentLinkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/components")
 public class ComponentsController {
+
+    @Autowired
+    MachineComponentLinkService machineComponentLinkService;
 
     @Autowired
     private ComponentsService componentService;
@@ -30,6 +34,8 @@ public class ComponentsController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComponent(@PathVariable Long id) {
+        machineComponentLinkService.deleteByComponentId(id);
+
         componentService.deleteComponentById(id);
         return ResponseEntity.noContent().build();
     }

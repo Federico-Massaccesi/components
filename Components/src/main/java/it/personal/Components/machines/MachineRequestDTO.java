@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MachineWithComponentsRequest {
+public class MachineRequestDTO {
     private String name;
     private Double price;
-    private List<ComponentWithQuantityDTO> components;
+    private List<ComponentQuantityDTO> components;
 }

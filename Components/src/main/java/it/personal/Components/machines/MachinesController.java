@@ -14,15 +14,15 @@ public class MachinesController {
     private MachinesService machineService;
 
     @PostMapping
-    public ResponseEntity<Machines> createMachine(@RequestBody MachineWithComponentsRequest request) {
-        Machines machine = machineService.createMachineWithComponents(request);
-        return ResponseEntity.ok(machine);
+    public ResponseEntity<Machines> createMachine(@RequestBody MachineRequestDTO machineRequest) {
+        Machines savedMachine = machineService.createMachine(machineRequest);
+        return ResponseEntity.ok(savedMachine);
     }
 
-
     @GetMapping("/{id}")
-    public ResponseEntity<Machines> getMachineById(@PathVariable Long id) {
-        return ResponseEntity.ok(machineService.getMachineById(id));
+    public ResponseEntity<MachineResponseDTO> getMachineById(@PathVariable Long id) {
+        MachineResponseDTO machineResponseDTO = machineService.getMachineById(id);
+        return ResponseEntity.ok(machineResponseDTO);
     }
 
     @GetMapping

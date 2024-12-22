@@ -21,7 +21,4 @@ public class Machines extends BaseEntity {
 
     private Double price;
 
-    @OneToMany(mappedBy = "machine", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<MachineComponentLink> components;
-
 }
